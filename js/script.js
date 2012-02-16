@@ -16,6 +16,7 @@ $("#colorPicker").miniColors({
 ctx = document.getElementById("canvas").getContext("2d");
 b = new Brush();
 ctx.strokeStyle = b.color;
+ctx.fillStyle = b.color;
 ctx.lineCap = "round";
 ctx.lineWidth = b.thickness;
 
@@ -24,42 +25,41 @@ $("#clearButton").click(function() {
     ctx.closePath();
 });
 
-$("#canvas").mousedown(function() {
+$("#canvas").mousedown(function(e) {
     mouseDown = true;
+    b.setPosition(e);
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, b.thickness/2, 0, Math.PI * 2, false);
+    ctx.fill();
+    ctx.closePath();
 });
 
-$("#canvas").mouseup(function() {
+$("#canvas").mouseup(function(e) {
     mouseDown = false;
 });
 
 $("#canvas").mousemove(function(e) {
     
     ctx.beginPath();
-    var target = e.target;
-    if (e.target)
-    {
-        var leftOffset = $(target).offset().left;
-        var topOffset = $(target).offset().top;
-        
-        var x = e.pageX - leftOffset;
-        var y = e.pageY - topOffset;
-        if (prevX === null || prevY === null)
-        {
-            prevX = x;
-            prevY = y;
-            return;
-        }
-        ctx.moveTo(prevX, prevY);
-        
-        if (mouseDown)
-        {
-            ctx.lineTo(x, y);
-            ctx.stroke();
+    b.setPosition(e);
 
-        }
-        prevX = x;
-        prevY = y;
+    if (prevX === null || prevY === null)
+    {
+        prevX = b.x;
+        prevY = b.y;
+        return;
     }
+    ctx.moveTo(prevX, prevY);
+    
+    if (mouseDown)
+    {
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+
+    }
+    prevX = b.x;
+    prevY = b.y;
+
     ctx.closePath();
 });
 
@@ -68,21 +68,35 @@ function Brush() {
 
     this.color = "rgb(0,0,0)";
     this.thickness = 10;
+    this.x = null;
+    this.y = null;
     
-    this.SetColor = function(color) {
+    this.setColor = function(color) {
         this.color = color;
     }
     
-    this.GetColor = function() {
+    this.getColor = function() {
         return this.color;
     }
     
-    this.SetThickness = function(thickness) {
+    this.setThickness = function(thickness) {
         this.thickness = thickness;
     }
     
-    this.GetThickness = function() {
+    this.getThickness = function() {
         return this.thickness;
+    }
+    
+    this.setPosition = function(e) {
+        var target = e.target;
+        if (e.target)
+        {
+            var leftOffset = $(target).offset().left;
+            var topOffset = $(target).offset().top;
+            
+            this.x = e.pageX - leftOffset;
+            this.y = e.pageY - topOffset;
+        }
     }
 
 }
