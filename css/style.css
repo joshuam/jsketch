@@ -1,8 +1,6 @@
+body { font-family: 'Droid Serif', 'Myriad Pro', 'Georgia', sans-serif; }
+
 #canvas {
     border: 1px solid black;
-    float: right;
-}
-
-#clearButton {
     float: right;
 }

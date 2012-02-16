@@ -4,9 +4,18 @@ var mouseDown = false;
 var prevX = null;
 var prevY = null;
 
+$("#colorPicker").miniColors({
+    change : function(hex, rgb){
+        if (b) {
+            b.color = "rgb(" + rgb.r + "," + rgb.g + "," + rgb.b + ")";
+            ctx.strokeStyle = b.color;
+        }
+    }
+});
+
 ctx = document.getElementById("canvas").getContext("2d");
 b = new Brush();
-ctx.fillStyle = b.color;
+ctx.strokeStyle = b.color;
 ctx.lineCap = "round";
 ctx.lineWidth = b.thickness;
 
@@ -51,13 +60,13 @@ $("#canvas").mousemove(function(e) {
         prevX = x;
         prevY = y;
     }
-    ctx.endPath();
+    ctx.closePath();
 });
 
 
 function Brush() {
 
-    this.color = "rgb(200,0,0)";
+    this.color = "rgb(0,0,0)";
     this.thickness = 10;
     
     this.SetColor = function(color) {
