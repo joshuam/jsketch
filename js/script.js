@@ -1,19 +1,35 @@
 $(document).ready(function(){
 
+//id of canvas element
+var canvas = "canvas";
+
 var mouseDown = false;
 var prevX = null;
 var prevY = null;
+
+$("#slider").slider({
+    value: 10,
+    change: function(event, ui){
+        $("#thickness").html(ui.value);
+        if (b)
+        {
+            b.thickness = ui.value;
+            ctx.lineWidth = b.thickness;
+        }
+    }
+});
 
 $("#colorPicker").miniColors({
     change : function(hex, rgb){
         if (b) {
             b.color = "rgb(" + rgb.r + "," + rgb.g + "," + rgb.b + ")";
             ctx.strokeStyle = b.color;
+            ctx.fillStyle = b.color;
         }
     }
 });
 
-ctx = document.getElementById("canvas").getContext("2d");
+ctx = document.getElementById(canvas).getContext("2d");
 b = new Brush();
 ctx.strokeStyle = b.color;
 ctx.fillStyle = b.color;
@@ -25,20 +41,17 @@ $("#clearButton").click(function() {
     ctx.closePath();
 });
 
-$("#canvas").mousedown(function(e) {
+$("#" + canvas).mousedown(function(e) {
     mouseDown = true;
     b.setPosition(e);
-    ctx.beginPath();
-    ctx.arc(b.x, b.y, b.thickness/2, 0, Math.PI * 2, false);
-    ctx.fill();
-    ctx.closePath();
+    b.drawCircle(ctx);
 });
 
-$("#canvas").mouseup(function(e) {
+$("#" + canvas).mouseup(function(e) {
     mouseDown = false;
 });
 
-$("#canvas").mousemove(function(e) {
+$("#" + canvas).mousemove(function(e) {
     
     ctx.beginPath();
     b.setPosition(e);
@@ -97,6 +110,12 @@ function Brush() {
             this.x = e.pageX - leftOffset;
             this.y = e.pageY - topOffset;
         }
+    }
+    
+    this.drawCircle = function(context) {
+        context.arc(this.x, this.y, this.thickness/2, 0, Math.PI * 2, false);
+        context.fill();
+    
     }
 
 }
